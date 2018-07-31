@@ -64,8 +64,11 @@ $menustring =
 ..|Objeto|frm_objeto.php?campoChave=SEQ&novo=1|Clique aqui para incluir um Objeto||mainFrame
 ..|Query SQL|frm_sql_query.php?campoChave=SEQ&novo=1|Clique aqui para incluir uma nova query||mainFrame
 ..|Usuário|frm_usuario.php?campoChave=SEQ&novo=1|Clique aqui para incluir um Usuário||mainFrame
+..|Servidor|frm_servidor.php?campoChave=SEQ&novo=1|Clique aqui para incluir um Servidor||mainFrame
 ..|Esquema de Cores|frm_esquema_cores.php?campoChave=SEQ&novo=1|Clique aqui para incluir um Esquema de Cores||mainFrame
 .|Administração||Administração|||1
+..|Servidores||Servidores|||
+...|Por Nome|visao_fs.php?consulta=servidoresPorNome|Servidores por Nome||mainFrame
 ..|Usuários||Usuários|||
 ...|Por Username|visao_fs.php?consulta=usuariosPorUsername|Usuários por Username||mainFrame
 ...|Por Nome|visao_fs.php?consulta=usuariosPorNome|Usuários por Nome||mainFrame
@@ -76,6 +79,7 @@ $menustring =
 ...|Por Usuário|visao_fs.php?consulta=logsPorUsuario|Logs por Usuário||mainFrame
 .|Selecionar Cores|frm_selecionaCores.php|Clique aqui para selecionar um esquema de cores||mainFrame
 .|Recarregar Cores|recarregaEsquemaCores.php|Clique aqui para recarregar as cores definidas pro usuário||_top
+.|Monitor Servidores|monitor.php|Clique aqui para visualizar a monitorização dos servidores||mainFrame
 ";
 
 $treemid->setMenuStructureString($menustring);

@@ -8,6 +8,10 @@ define("PAG_ERRO_ACESSO", "erro_acesso.php");
 
 require_once('consultas.php');
 
+require_once ('jpgraph/jpgraph.php');
+require_once ('jpgraph/jpgraph_bar.php');
+
+
 // classes
 
 /**
@@ -432,7 +436,7 @@ function rastreioObjParse( $objetos = null )
 
 // ---------------------------------------------------------------------------------------
 
-function geraArrayPacotes($indice = "number") {
+function geraArrayPacotes($indice = "number", $ordem = "dt_ult_atualizacao DESC") {
 
 global $_objDB;	
 
@@ -440,7 +444,7 @@ global $_objDB;
 $arrPacotes = array();
 
 // $conexao = getConexao ();
-$query = "SELECT cod_rastreamento, nome, url_rastreamento, url1, url1_desc, url2, url2_desc, url3, url3_desc, url4, url4_desc, url5, url5_desc, altura_iframe, date_format (dt_envio, '%d-%m-%Y') dt_envio FROM objeto WHERE status = 1 ORDER BY ordem";
+$query = "SELECT cod_rastreamento, nome, url_rastreamento, url1, url1_desc, url2, url2_desc, url3, url3_desc, url4, url4_desc, url5, url5_desc, altura_iframe, date_format (dt_envio, '%d-%m-%Y') dt_envio FROM objeto WHERE status = 1 ORDER BY $ordem";
 
 $objData = $_objDB->execQuery(DB_ALIAS, $query);
 if ($indice == "number")
@@ -588,10 +592,10 @@ fwrite($handle, $conteudo);
 
 // ---------------------------------------------------------------------------------------
 
-function msgBanner ($texto, $class_header = "") {
+function msgBanner ($texto, $class_header = "", $align = "center", $width = "100%") {
 	
-$tabela = "<table width='100%'><tr>";
-$tabela .= "<th align=center " . $class_header . ">";
+$tabela = "<table width='$width'><tr>";
+$tabela .= "<th align=$align " . $class_header . ">";
 $tabela .= $texto;
 $tabela .= "</th>";
 $tabela .= "</tr>";
@@ -1339,6 +1343,9 @@ if ($edicao != "1") {
 	if ($tipo == "color") {
 		$valor = mostraCor($valor);
 	}
+	if ($tipo == "password") {
+		$valor = '*********';
+	}
 	$retorno .= "<span id = 'layer" . $campo . "' style='position:relative;'>" . $valor . "</span>";
 }
 else {
@@ -1454,7 +1461,7 @@ return $retorno;
 
 // ---------------------------------------------------------------------------------------
 
-function montaCheck ($campo, $opcoes, $texto, $valorAtual, $edicao, $complemento = "") {
+function montaCheck ($campo, $opcoes, $texto, $valorAtual, $edicao, $complemento = "", $botaoOnOff = "") {
 // campo = nome do campo
 // opcoes [0] = valor a ser gravado qd selecionado
 // opcoes [0] = valor a ser gravado qd NÃO selecionado
@@ -1468,22 +1475,54 @@ $arrOpcoes = explode (",", $opcoes);
 $arrTexto = explode (",", $texto);
 
 if ($edicao == "1") {
-	$retorno =  "<input name='" . $campo . "' type='hidden' value='" . $valorAtual . "'>" . chr (13);
-	$retorno .= "<input name='mostra" . $campo . "' type='checkbox' value='" . $valorAtual . "' ";
-	if ($arrOpcoes[0] == $valorAtual) {
-		// marcar como checked
-	   $retorno .= " checked ";
+	if ($botaoOnOff == "1") {
+		if ($arrOpcoes[0] == $valorAtual) {
+			// marcar como checked
+			$styleOn  = "visible";
+			$displayOn = "inline";
+			$styleOff = "hidden";
+			$displayOff = "none";
+		}
+		else {
+			// marcar como not checked
+			$styleOn  = "hidden";
+			$displayOn = "none";
+			$styleOff = "visible";
+			$displayOff = "inline";
+		}
+		$layerOn  = "<span name='layer_" . $campo . "_ON' id='layer_" . $campo . "_ON' style='visibility:$styleOn; display:$displayOn'>" . geraOnOff("ON", "onclick='gravaCheckOnOff(" . chr (34) . $campo . chr (34) . ", " . chr (34) . $opcoes . chr (34) . ")'") . "</span>";
+		$layerOff = "<span name='layer_" . $campo . "_OFF' id='layer_" . $campo . "_OFF' style='visibility:$styleOff; display:$displayOff'>" . geraOnOff("OFF", "onclick='gravaCheckOnOff(" . chr (34) . $campo . chr (34) . ", " . chr (34) . $opcoes . chr (34) . ")'") . "</span>";
+		
+		$retorno  = $layerOn . $layerOff;
+		$retorno .=  "<input name='" . $campo . "' type='hidden' value='" . $valorAtual . "'>" . chr (13);
 	}
-	$retorno .= " onclick=" . chr (34) . "gravaCheck('" . $campo . "', '" . $opcoes . "')" . chr (34) . ">" . $arrTexto[0];
+	else {
+		$retorno =  "<input name='" . $campo . "' type='hidden' value='" . $valorAtual . "'>" . chr (13);
+		$retorno .= "<input name='mostra" . $campo . "' type='checkbox' value='" . $valorAtual . "' ";
+		if ($arrOpcoes[0] == $valorAtual) {
+			// marcar como checked
+			$retorno .= " checked ";
+		}
+		$retorno .= " onclick=" . chr (34) . "gravaCheck('" . $campo . "', '" . $opcoes . "')" . chr (34) . ">" . $arrTexto[0];
+	}
 }
 else {
-	if ($arrOpcoes[0] == $valorAtual) {
-		// marcar como checked
-	   $retorno = $arrTexto[0];
+	if ($botaoOnOff == "1") {
+		if ($arrOpcoes[0] == $valorAtual) {
+			// marcar como checked
+			$retorno = geraOnOff("ON");
+		}
+		else
+			$retorno = geraOnOff("OFF");
 	}
-   else
-	   $retorno = $arrTexto[1];
-
+	else {
+		if ($arrOpcoes[0] == $valorAtual) {
+			// marcar como checked
+			$retorno = $arrTexto[0];
+		}
+		else
+			$retorno = $arrTexto[1];
+	}
 }
 
 if ($retorno == "")
@@ -1931,6 +1970,10 @@ if ($nroRegistros > 0) {
 				
 				if ((strlen($valor) == 7) and (substr($valor, 0, 1) == "#")) {
 					$valor = mostraCor($valor);
+				}
+				
+				if (($valor == "ON") or ($valor == "OFF")) {
+					$valor = geraOnOff($valor);
 				}
 				
 				if ($valor != "") {
@@ -2661,7 +2704,89 @@ return "<table border=0 width=45 height=5><tr><td style='$style'>&nbsp;&nbsp;&nb
 
 // ---------------------------------------------------------------------------------------
 
- 
+function isDate($date, $format = 'Y-m-d')  {
+
+// testa se valor no string é data válida
+/*
+    if (!$value) {
+        return false;
+    }
+
+    try {
+        new \DateTime($value);
+        return true;
+    } catch (\Exception $e) {
+        return false;
+    }
+*/
+
+$d = DateTime::createFromFormat($format, $date);
+// The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+return $d && $d->format($format) === $date;
+
+} 
+
+
+// ---------------------------------------------------------------------------------------
+
+
+
+function geraGraficoBarras ($titulo, $legenda, $databary, $databarx) {
+	
+// New graph with a drop shadow
+$graph = new Graph(300,200,'auto');
+$graph->clearTheme();
+$graph->SetShadow();
+
+// Use a "text" X-scale
+$graph->SetScale("textlin");
+
+// Specify X-labels
+$graph->xaxis->SetTickLabels($databarx);
+$graph->xaxis->SetTextLabelInterval(3);
+
+// Hide the tick marks
+$graph->xaxis->HideTicks();
+
+// Set title and subtitle
+$graph->title->Set($titulo);
+
+// Use built in font
+$graph->title->SetFont(FF_FONT1,FS_BOLD);
+
+// Create the bar plot
+$b1 = new BarPlot($databary);
+$b1->SetLegend($legenda);
+$b1->SetWidth(0.4);
+
+
+// The order the plots are added determines who's ontop
+$graph->Add($b1);
+
+// Finally output the  image
+$graph->Stroke();
+	
+	
+}
+
+
+// ---------------------------------------------------------------------------------------
+
+function geraOnOff ($valor, $complemento = "") {
+
+if ($valor == "ON")
+	$img = "img/green.png";
+else
+	$img = "img/red.png";
+	
+$ret = "<img src='$img' $complemento valign='middle' width=20 height=20>";
+
+return $ret;
+
+}	
+
+// ---------------------------------------------------------------------------------------
+
 ?>
 
 

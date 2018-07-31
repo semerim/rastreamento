@@ -115,6 +115,9 @@ document.dhtmlEditors_home='dhtmleditor/';
    $campos[18][0] = "DT_ENVIO";
    $campos[18][1] = "date_format (dt_envio, '%d/%m/%Y')";
 
+   $campos[19][0] = "DT_ULT_ATUALIZACAO";
+   $campos[19][1] = "date_format (dt_ult_atualizacao, '%d/%m/%Y')";
+   
    $tabelas = "OBJETO";
 
    $filtro = $campo_chave . " = " . $valor_chave;
@@ -147,6 +150,7 @@ document.dhtmlEditors_home='dhtmleditor/';
    define ("EDIT_ORDEM", montaEdit ("grava_ORDEM", ORDEM, 15, "", $edicao, $novo, proxOrdemObjeto()));
    
    define ("EDIT_DT_ENVIO", montaEdit ("grava_DT_ENVIO", DT_ENVIO, 10, "date", $edicao, $novo, date("d/m/Y")));
+   define ("EDIT_DT_ULT_ATUALIZACAO", montaEdit ("grava_DT_ULT_ATUALIZACAO", DT_ULT_ATUALIZACAO, 10, "date", $edicao, $novo, date("d/m/Y")));
    
    // define ("EDIT_CATEGORIA", montaEdit ("grava_CATEGORIA", CATEGORIA, 30, "", $edicao, $novo, ""));
    // define ("EDIT_TEXTO", montaEdit ("grava_TEXTO", TEXTO, 50, "", "0", "1", ""));
@@ -272,6 +276,12 @@ document.getElementById('layerRastreio').src = "rastreio.php?cod_rastreio=" + ra
     <td class="tabela1Fixo"><div align="right">Data de Envio:</div></td>
     <td align="left" valign="middle" class="tabela2Fixo">
     	 <?php echo EDIT_DT_ENVIO ?>
+    </td>
+  </tr>
+  <tr>
+    <td class="tabela1Fixo"><div align="right">Data Ult.Atualização:</div></td>
+    <td align="left" valign="middle" class="tabela2Fixo">
+    	 <?php echo EDIT_DT_ULT_ATUALIZACAO ?>
     </td>
   </tr>
   <tr>

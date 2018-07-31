@@ -1,6 +1,7 @@
 <?php
 
-// echo phpversion();
+echo phpversion();
+echo phpinfo();
 
 session_start();
 

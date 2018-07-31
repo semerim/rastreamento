@@ -310,6 +310,44 @@ if ((campoMostra) && (campoGrava)) {
 
 // ********************************************************************************************* //
 
+function gravaCheckOnOff (nomeCampo, valores) {
+
+arrValores = valores.split (",");
+strForm = "document.forms[0]";
+
+// strCampoMostra = strForm + ".mostra" + nomeCampo;
+strCampoGrava = strForm + "." + nomeCampo;
+campoGrava = eval (strCampoGrava);
+// campoMostra = eval (strCampoMostra);
+
+// if ((campoMostra) && (campoGrava)) {
+if (campoGrava) {
+	layerOff = "layer_" + nomeCampo + "_OFF";
+	layerOn = "layer_" + nomeCampo + "_ON";
+	// alert (layerOff);
+	// alert (layerOn);
+	// alert (campoGrava.value);
+
+	if (campoGrava.value == arrValores[1]) {
+		// desligado - ligar
+		campoGrava.value = arrValores[0];
+		esconde(layerOff);
+		mostra (layerOn);
+   }
+   else {
+		// ligado - desligar
+		campoGrava.value = arrValores[1];
+		esconde(layerOn);
+		mostra (layerOff);
+//       alert (arrValores[1]);
+   }
+}
+
+}
+
+
+// ********************************************************************************************* //
+
 function gravaCheckSelecionados (chave, nroSeq) {
 
 // frm = document.forms[0];

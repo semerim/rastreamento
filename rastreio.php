@@ -5,6 +5,7 @@ header('Content-Type: text/html; charset=latin1');
 session_start();
 
 require_once('globais.php');
+require_once('conexao.php');
 require_once('inc_rastreamento.php');
 
 ?>
@@ -79,7 +80,15 @@ th {
 			// primeiro evento - inicializa a tabela
 			echo "<TABLE class='table table-condensed'>\n";
 			echo "<TH>" . $qs_cod_rastreio . "</TH><TH></TH><TH></TH>\n";
+			$dataHora = $evento[0] . ":00";
+			if (isDate($dataHora, 'd/m/Y H:i:s')) {
+				$strDataHora = "str_to_date ('$dataHora', '%d/%m/%Y %H:%i:%s')";
+				$sqlUpdate = "UPDATE objeto SET dt_ult_atualizacao = $strDataHora WHERE cod_rastreamento = '$qs_cod_rastreio'";
+				// dumpVar($sqlUpdate);
+				simpleSelectPDO($sqlUpdate);
+			}
 		}
+				
 		echo "<TR><TD width='25%' class='dataHoraCidade'>" . $evento[0];
 		if ($evento[1]!=='') 
 			echo " - " . $evento[1];
